@@ -24,7 +24,7 @@ def show_project_menu():
         case "1":
             create_project()
         case "2":
-            print("Viewing your projects is currently not implemented.")
+            view_my_projects()
         case "3":
             view_all_projects()
         case "4":
@@ -97,4 +97,25 @@ def view_all_projects():
         print("-" * 30)
 
 
+def view_my_projects():
+    print("\n=== My Projects ===")
+    if database.current_user is None:
+        print("You must be logged in to view your projects.")
+        return
+
+    owner_email = database.current_user["email"]
+    projects = [p for p in database.get_projects() if p['owner_email'] == owner_email]
+
+    if not projects:
+        print("You have not created any projects yet.")
+        return
+
+    for idx, project in enumerate(projects, start=1):
+        print(f"\nProject #{idx}")
+        print(f"Title: {project['title']}")
+        print(f"Details: {project['details']}")
+        print(f"Target: {project['total_target']}")
+        print(f"Start Date: {project['start_date']}")
+        print(f"End Date: {project['end_date']}")
+        print("-" * 30)
     
