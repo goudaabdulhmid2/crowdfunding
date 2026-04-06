@@ -4,6 +4,7 @@ from utils import (
     validate_positive_number,
     validate_date_format,
     validate_start_end_dates,
+    validate_choice
 )
 
 
@@ -28,7 +29,7 @@ def show_project_menu():
         case "3":
             view_all_projects()
         case "4":
-            print("Editing projects is currently not implemented.")
+            edit_project()
         case "5":
             print("Deleting projects is currently not implemented.")
         case "6":
@@ -119,3 +120,71 @@ def view_my_projects():
         print(f"End Date: {project['end_date']}")
         print("-" * 30)
     
+
+def edit_project():
+    if database.current_user is None:
+        print("You must be logged in to edit your projects.")
+        return
+
+    data = database.load_data()
+    owner_email = database.current_user["email"]
+    projects = [p for p in data["projects"] if p["owner_email"] == owner_email]
+
+    if not projects:
+        print("You have not created any projects yet.")
+        return
+
+    print("\n=== Own projects ===")
+    for idx, project in enumerate(projects, start=1):
+        print(f"{idx}. {project['title']}")
+
+    choice = input("Enter the number of the project you want to edit: ")
+
+    try:
+        choice = validate_required(choice, "Project Choice")
+        choice = validate_choice(choice, range(1, len(projects) + 1))
+        project_to_edit = projects[choice - 1]
+
+        new_title = input(
+            f"Enter new title (leave blank to keep '{project_to_edit['title']}'): "
+        )
+        new_details = input("Enter new details (leave blank to keep current details): ")
+        new_target = input(
+            f"Enter new total target (leave blank to keep '{project_to_edit['total_target']}'): "
+        )
+        new_start_date = input(
+            f"Enter new start date (YYYY-MM-DD) (leave blank to keep '{project_to_edit['start_date']}'): "
+        )
+        new_end_date = input(
+            f"Enter new end date (YYYY-MM-DD) (leave blank to keep '{project_to_edit['end_date']}'): "
+        )
+
+        final_title = new_title.strip() or project_to_edit["title"]
+        final_title = validate_required(final_title, "Project Title")
+
+        final_details = new_details.strip() or project_to_edit["details"]
+        final_details = validate_required(final_details, "Project Details")
+
+        final_target = new_target.strip() or str(project_to_edit["total_target"])
+        final_target = validate_positive_number(final_target, "Total Target")
+
+        final_start_date = new_start_date.strip() or project_to_edit["start_date"]
+        final_start_date = validate_date_format(final_start_date, "Start Date")
+
+        final_end_date = new_end_date.strip() or project_to_edit["end_date"]
+        final_end_date = validate_date_format(final_end_date, "End Date")
+        final_start_date, final_end_date = validate_start_end_dates(
+            final_start_date,
+            final_end_date,
+        )
+
+        project_to_edit["title"] = final_title
+        project_to_edit["details"] = final_details
+        project_to_edit["total_target"] = final_target
+        project_to_edit["start_date"] = final_start_date
+        project_to_edit["end_date"] = final_end_date
+
+        database.save_data(data)
+        print("Project updated successfully!")
+    except ValueError as e:
+        print(f"Error: {e}")

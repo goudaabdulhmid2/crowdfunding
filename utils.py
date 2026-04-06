@@ -64,3 +64,13 @@ def validate_start_end_dates(start_date, end_date):
     if start >= end:
         raise ValueError("Start date must be before end date.")
     return start_date, end_date
+
+
+def validate_choice(choice, valid_choices ):
+    if not choice.isdigit():
+        raise ValueError("Choice must be a number.")
+    choice = int(choice)
+
+    if choice not in valid_choices:
+        raise ValueError("Invalid choice. Please try again.")
+    return choice
