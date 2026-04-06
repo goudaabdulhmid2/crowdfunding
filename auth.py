@@ -21,7 +21,7 @@ def show_auth_menu():
         case "1":
             register_user()
         case "2":
-            print("Account activation is currently not implemented.")
+            activate_account()
         case "3":
             print("Login is currently not implemented.")
         case "4":
@@ -34,29 +34,29 @@ def show_auth_menu():
 def register_user():
     new_user = {}
     try:
-        first_name = input("Enter ur First Name: ")
+        first_name = input("Enter your First Name: ")
         first_name = validate_required(first_name, "First Name")
         new_user["first_name"] = first_name
 
-        last_name = input("Enter ur Last Name: ")
+        last_name = input("Enter your Last Name: ")
         last_name = validate_required(last_name, "Last Name")
         new_user["last_name"] = last_name
 
-        email = input("Enter ur Email: ")
+        email = input("Enter your Email: ")
         email = validate_required(email, "Email")
         email = validate_email(email)
         email = validate_email_is_unique(email)
         new_user["email"] = email
 
-        password = input("Enter ur Password: ")
+        password = input("Enter your Password: ")
         password = validate_required(password, "Password")
 
-        confirm_password = input("Confirm ur Password: ")
+        confirm_password = input("Confirm your Password: ")
         confirm_password = validate_required(confirm_password, "Confirm Password")
         validate_password_confirmation(password, confirm_password)
         new_user["password"] = password
 
-        phone = input("Enter ur Phone Number: ")
+        phone = input("Enter your Phone Number: ")
         phone = validate_required(phone, "Phone Number")
         phone = validate_egyptian_phone(phone)
         new_user["phone"] = phone
@@ -65,6 +65,26 @@ def register_user():
 
         users.append(new_user)
         print("Registration successful! Please activate your account before logging in.")
+    
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+def activate_account():
+    try:
+        input_email = input("Enter your email to activate your account: ")
+        input_email = validate_required(input_email, "Email")
+        input_email = validate_email(input_email)
+
+        for user in users:
+            if user["email"] == input_email:
+                if user["is_active"]:
+                    print("Account is already active.")
+                else:
+                    user["is_active"] = True
+                    print("Account activated successfully!")
+                return
+        raise ValueError("Email not found. Please register first.")
     
     except ValueError as e:
         print(f"Error: {e}")
