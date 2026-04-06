@@ -4,7 +4,7 @@ from utils import (
     validate_positive_number,
     validate_date_format,
     validate_start_end_dates,
-    validate_choice
+    validate_choice,
 )
 from auth import logout
 
@@ -12,21 +12,23 @@ from auth import logout
 def print_project(project, index=None, show_owner=True):
     if index is not None:
         print(f"\nProject #{index}")
- 
+
     print(f"Title: {project['title']}")
     print(f"Details: {project['details']}")
     print(f"Target: {project['total_target']}")
     print(f"Start Date: {project['start_date']}")
     print(f"End Date: {project['end_date']}")
-    
+
     if show_owner:
         print(f"Owner: {project['owner_email']}")
 
     print("-" * 30)
 
+
 def get_current_user_projects(projects):
     owner_email = database.current_user["email"]
     return [project for project in projects if project["owner_email"] == owner_email]
+
 
 def show_project_menu():
     while True:
@@ -38,7 +40,6 @@ def show_project_menu():
         print("5. Delete Own Projects")
         print("6. Search Projects By Date")
         print("7. Logout and Return to Main Menu")
-
 
         choice = input("Enter your choice: ")
 
@@ -61,9 +62,6 @@ def show_project_menu():
                 break
             case _:
                 print("Invalid choice. Please try again.")
-
-
-
 
 def create_project():
     new_project = {}
@@ -116,7 +114,6 @@ def view_all_projects():
 
     for idx, project in enumerate(projects, start=1):
         print_project(project, idx)
-        
 
 
 def view_my_projects():
@@ -125,7 +122,6 @@ def view_my_projects():
         print("You must be logged in to view your projects.")
         return
 
-    
     projects = get_current_user_projects(database.get_projects())
 
     if not projects:
@@ -134,8 +130,7 @@ def view_my_projects():
 
     for idx, project in enumerate(projects, start=1):
         print_project(project, idx, False)
-        
-    
+
 
 def edit_project():
     if database.current_user is None:
@@ -206,22 +201,21 @@ def edit_project():
 
 
 def delete_project():
-
     if database.current_user is None:
         print("You must be logged in to delete your projects.")
         return
-    
+
     data = database.load_data()
     projects = get_current_user_projects(data["projects"])
 
     if not projects:
         print("You have not created any projects yet.")
         return
-    
+
     print("\n=== Own projects ===")
     for idx, project in enumerate(projects, start=1):
         print(f"{idx}. {project['title']}")
-    
+
     choice = input("Enter the number of the project you want to delete: ")
     try:
         choice = validate_required(choice, "Project Choice")

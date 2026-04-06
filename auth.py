@@ -7,6 +7,14 @@ from utils import (
 )
 import database
 
+
+def find_user_by_email(email):
+    for user in database.get_users():
+        if user["email"] == email:
+            return user
+    return None
+
+
 def show_auth_menu():
     from project import show_project_menu
 
@@ -29,12 +37,10 @@ def show_auth_menu():
                 if is_logged_in:
                     show_project_menu()
             case "4":
-                print("Exiting the authentication menu.")
+                print("Exiting the application. Goodbye!")
                 break
             case _:
                 print("Invalid choice. Please try again.")
-
-
 
 def register_user():
     new_user = {}
@@ -82,17 +88,21 @@ def activate_account():
         input_email = validate_email(input_email)
 
         data = database.load_data()
-
+        user_to_activate = None
         for user in data["users"]:
             if user["email"] == input_email:
-                if user["is_active"]:
-                    print("Account is already active.")
-                else:
-                    user["is_active"] = True
-                    database.save_data(data)
-                    print("Account activated successfully!")
-                return
-        raise ValueError("Email not found. Please register first.")
+                user_to_activate = user
+                break
+
+        if user_to_activate is None:
+            raise ValueError("Email not found. Please register first.")
+
+        if user_to_activate["is_active"]:
+            print("Account is already active.")
+        else:
+            user_to_activate["is_active"] = True
+            database.save_data(data)
+            print("Account activated successfully!")
     
     except ValueError as e:
         print(f"Error: {e}")
@@ -107,19 +117,20 @@ def login():
         input_password = input("Enter your password: ")
         input_password = validate_required(input_password, "Password")
 
-        for user in database.get_users():
-            if user["email"] == input_email:
-                if not user["is_active"]:
-                    print("Account is not active. Please activate your account first.")
-                    return False
-                if user["password"] == input_password:
-                    print(f"Welcome back, {user['first_name']}!")
-                    database.current_user = user
-                    return True
-                else:
-                    raise ValueError("Incorrect password. Please try again.")
-                
-        raise ValueError("Email not found. Please register first.")
+        user = find_user_by_email(input_email)
+        if user is None:
+            raise ValueError("Email not found. Please register first.")
+
+        if not user["is_active"]:
+            print("Account is not active. Please activate your account first.")
+            return False
+
+        if user["password"] != input_password:
+            raise ValueError("Incorrect password. Please try again.")
+
+        print(f"Welcome back, {user['first_name']}!")
+        database.current_user = user
+        return True
 
     except ValueError as e:
         print(f"Error: {e}")

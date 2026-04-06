@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 def validate_required(value, field_name):
-
     cleaned_value = value.strip()
     if not cleaned_value:
         raise ValueError(f"{field_name} cannot be empty.")
@@ -12,11 +11,11 @@ def validate_required(value, field_name):
 
 
 def validate_email(email):
-
     email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     if not re.match(email_pattern, email):
         raise ValueError("Invalid email format.")
     return email
+
 
 def validate_email_is_unique(email):
     for user in database.get_users():
@@ -29,6 +28,7 @@ def validate_password_confirmation(password, confirm_password):
     if password != confirm_password:
         raise ValueError("Passwords do not match.")
     return password
+
 
 def validate_egyptian_phone(phone):
     phone_pattern = r'^(010|011|012|015)\d{8}$'
@@ -57,7 +57,6 @@ def validate_date_format(date_str, field_name):
 
 
 def validate_start_end_dates(start_date, end_date):
-
     start = datetime.strptime(start_date, "%Y-%m-%d")
     end = datetime.strptime(end_date, "%Y-%m-%d")
 
@@ -66,7 +65,7 @@ def validate_start_end_dates(start_date, end_date):
     return start_date, end_date
 
 
-def validate_choice(choice, valid_choices ):
+def validate_choice(choice, valid_choices):
     if not choice.isdigit():
         raise ValueError("Choice must be a number.")
     choice = int(choice)
