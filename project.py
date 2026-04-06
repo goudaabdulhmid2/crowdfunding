@@ -8,8 +8,27 @@ from utils import (
 )
 
 
+def print_project(project, index=None, show_owner=True):
+    if index is not None:
+        print(f"\nProject #{index}")
+ 
+    print(f"Title: {project['title']}")
+    print(f"Details: {project['details']}")
+    print(f"Target: {project['total_target']}")
+    print(f"Start Date: {project['start_date']}")
+    print(f"End Date: {project['end_date']}")
+    
+    if show_owner:
+        print(f"Owner: {project['owner_email']}")
+
+    print("-" * 30)
+
+def get_current_user_projects(projects):
+    owner_email = database.current_user["email"]
+    return [project for project in projects if project["owner_email"] == owner_email]
+
 def show_project_menu():
-    """Display the project menu placeholder."""
+
     print("\n=== Project Menu ===")
     print("1. Create Project")
     print("2. View My Projects")
@@ -39,6 +58,8 @@ def show_project_menu():
             print("Returning to the main menu.")
         case _:
             print("Invalid choice. Please try again.")
+
+
 
 
 def create_project():
@@ -91,14 +112,8 @@ def view_all_projects():
         return
 
     for idx, project in enumerate(projects, start=1):
-        print(f"\nProject #{idx}")
-        print(f"Title: {project['title']}")
-        print(f"Details: {project['details']}")
-        print(f"Target: {project['total_target']}")
-        print(f"Start Date: {project['start_date']}")
-        print(f"End Date: {project['end_date']}")
-        print(f"Owner: {project['owner_email']}")
-        print("-" * 30)
+        print_project(project, idx)
+        
 
 
 def view_my_projects():
@@ -107,21 +122,16 @@ def view_my_projects():
         print("You must be logged in to view your projects.")
         return
 
-    owner_email = database.current_user["email"]
-    projects = [p for p in database.get_projects() if p['owner_email'] == owner_email]
+    
+    projects = get_current_user_projects(database.get_projects())
 
     if not projects:
         print("You have not created any projects yet.")
         return
 
     for idx, project in enumerate(projects, start=1):
-        print(f"\nProject #{idx}")
-        print(f"Title: {project['title']}")
-        print(f"Details: {project['details']}")
-        print(f"Target: {project['total_target']}")
-        print(f"Start Date: {project['start_date']}")
-        print(f"End Date: {project['end_date']}")
-        print("-" * 30)
+        print_project(project, idx, False)
+        
     
 
 def edit_project():
@@ -130,8 +140,7 @@ def edit_project():
         return
 
     data = database.load_data()
-    owner_email = database.current_user["email"]
-    projects = [p for p in data["projects"] if p["owner_email"] == owner_email]
+    projects = get_current_user_projects(data["projects"])
 
     if not projects:
         print("You have not created any projects yet.")
@@ -200,8 +209,7 @@ def delete_project():
         return
     
     data = database.load_data()
-    owner_email = database.current_user["email"]
-    projects = [p for p in data["projects"] if p["owner_email"] == owner_email]
+    projects = get_current_user_projects(data["projects"])
 
     if not projects:
         print("You have not created any projects yet.")
@@ -242,14 +250,7 @@ def search_projects_by_date():
 
         print(f"\nProjects active on {date_input}:")
         for idx, project in enumerate(active_projects, start=1):
-            print(f"\nProject #{idx}")
-            print(f"Title: {project['title']}")
-            print(f"Details: {project['details']}")
-            print(f"Target: {project['total_target']}")
-            print(f"Start Date: {project['start_date']}")
-            print(f"End Date: {project['end_date']}")
-            print(f"Owner: {project['owner_email']}")
-            print("-" * 30)
+            print_project(project, idx)
 
     except ValueError as e:
         print(f"Error: {e}")
