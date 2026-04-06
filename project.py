@@ -6,6 +6,7 @@ from utils import (
     validate_start_end_dates,
     validate_choice
 )
+from auth import logout
 
 
 def print_project(project, index=None, show_owner=True):
@@ -28,36 +29,38 @@ def get_current_user_projects(projects):
     return [project for project in projects if project["owner_email"] == owner_email]
 
 def show_project_menu():
+    while True:
+        print("\n=== Project Menu ===")
+        print("1. Create Project")
+        print("2. View My Projects")
+        print("3. View All Projects")
+        print("4. Edit Own Projects")
+        print("5. Delete Own Projects")
+        print("6. Search Projects By Date")
+        print("7. Back to Main Menu")
 
-    print("\n=== Project Menu ===")
-    print("1. Create Project")
-    print("2. View My Projects")
-    print("3. View All Projects")
-    print("4. Edit Own Projects")
-    print("5. Delete Own Projects")
-    print("6. Search Projects By Date")
-    print("7. Back to Main Menu")
 
+        choice = input("Enter your choice: ")
 
-    choice = input("Enter your choice: ")
-
-    match choice:
-        case "1":
-            create_project()
-        case "2":
-            view_my_projects()
-        case "3":
-            view_all_projects()
-        case "4":
-            edit_project()
-        case "5":
-            delete_project()
-        case "6":
-            search_projects_by_date()
-        case "7":
-            print("Returning to the main menu.")
-        case _:
-            print("Invalid choice. Please try again.")
+        match choice:
+            case "1":
+                create_project()
+            case "2":
+                view_my_projects()
+            case "3":
+                view_all_projects()
+            case "4":
+                edit_project()
+            case "5":
+                delete_project()
+            case "6":
+                search_projects_by_date()
+            case "7":
+                print("Logging out and returning to the main menu.")
+                logout()
+                break
+            case _:
+                print("Invalid choice. Please try again.")
 
 
 

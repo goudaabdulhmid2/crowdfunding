@@ -8,25 +8,31 @@ from utils import (
 import database
 
 def show_auth_menu():
-    print("\n=== Authentication Menu ===")
-    print("1. Register")
-    print("2. Activate Account")
-    print("3. Login")
-    print("4. Exit")
+    from project import show_project_menu
 
-    choice = input("Enter your choice: ")
+    while True:
+        print("\n=== Authentication Menu ===")
+        print("1. Register")
+        print("2. Activate Account")
+        print("3. Login")
+        print("4. Exit")
 
-    match choice:
-        case "1":
-            register_user()
-        case "2":
-            activate_account()
-        case "3":
-            login()
-        case "4":
-            print("Exiting the application. Goodbye!")
-        case _:
-            print("Invalid choice. Please try again.")
+        choice = input("Enter your choice: ")
+
+        match choice:
+            case "1":
+                register_user()
+            case "2":
+                activate_account()
+            case "3":
+                is_logged_in = login()
+                if is_logged_in:
+                    show_project_menu()
+            case "4":
+                print("Exiting the authentication menu.")
+                break
+            case _:
+                print("Invalid choice. Please try again.")
 
 
 
@@ -105,11 +111,11 @@ def login():
             if user["email"] == input_email:
                 if not user["is_active"]:
                     print("Account is not active. Please activate your account first.")
-                    return
+                    return False
                 if user["password"] == input_password:
                     print(f"Welcome back, {user['first_name']}!")
                     database.current_user = user
-                    return
+                    return True
                 else:
                     raise ValueError("Incorrect password. Please try again.")
                 
@@ -117,3 +123,12 @@ def login():
 
     except ValueError as e:
         print(f"Error: {e}")
+        return False
+
+
+def logout():
+    if database.current_user is None:
+        print("You are not logged in.")
+    else:
+        print(f"Goodbye, {database.current_user['first_name']}!")
+        database.current_user = None
