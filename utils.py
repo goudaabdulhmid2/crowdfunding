@@ -1,5 +1,6 @@
 import re
 from database import users
+from datetime import datetime
 
 
 def validate_required(value, field_name):
@@ -34,3 +35,32 @@ def validate_egyptian_phone(phone):
     if not re.match(phone_pattern, phone):
         raise ValueError("Invalid Egyptian phone number format.")
     return phone
+
+
+def validate_positive_number(value, field_name):
+    try:
+        numeric_value = float(value)
+    except ValueError as error:
+        raise ValueError(f"{field_name} must be a numeric value.") from error
+
+    if numeric_value <= 0:
+        raise ValueError(f"{field_name} must be a positive number.")
+    return numeric_value
+
+
+def validate_date_format(date_str, field_name):
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError as error:
+        raise ValueError(f"{field_name} must be a valid date in YYYY-MM-DD format.") from error
+    return date_str
+
+
+def validate_start_end_dates(start_date, end_date):
+
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+
+    if start >= end:
+        raise ValueError("Start date must be before end date.")
+    return start_date, end_date
