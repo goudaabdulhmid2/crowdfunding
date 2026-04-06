@@ -1,17 +1,51 @@
 # Crowdfunding Console Application
 
-Learning project for building a modular Python console application step by step.
+A simple console-based crowdfunding application built with Python.
 
-## Initial Structure
+## Features
 
-- `main.py`: application entry point
-- `auth.py`: authentication-related logic
-- `project.py`: project-related logic
-- `utils.py`: shared validation helpers
-- `database.py`: in-memory storage
+- User registration
+- Account activation
+- User login and logout
+- Create project
+- View all projects
+- View my projects
+- Edit my projects
+- Delete my projects
+- Search projects by date
+
+## Project Files
+
+- `main.py` : application entry point
+- `auth.py` : authentication logic
+- `project.py` : project logic
+- `utils.py` : validation functions
+- `database.py` : JSON storage functions
+- `data.json` : saved users and projects
+
+## Validation
+
+- Email format validation
+- Egyptian phone number validation
+- Password confirmation
+- Positive target validation
+- Date format validation
+- Start date must be before end date
+
+## Storage
+
+- Users and projects are stored in `data.json`
+- Logged-in user is stored temporarily during app runtime
 
 ## Run
 
-```bash
-python main.py
+Use:
+
+```powershell
+py main.py
 ```
+
+## Notes
+
+- Passwords are stored as plain text for learning purposes
+- This project uses JSON instead of a real database
