@@ -62,7 +62,7 @@ def register_user():
 
         new_user["is_active"] = False
 
-        database.users.append(new_user)
+        database.add_user(new_user)
         print("Registration successful! Please activate your account before logging in.")
     
     except ValueError as e:
@@ -75,12 +75,15 @@ def activate_account():
         input_email = validate_required(input_email, "Email")
         input_email = validate_email(input_email)
 
-        for user in database.users:
+        data = database.load_data()
+
+        for user in data["users"]:
             if user["email"] == input_email:
                 if user["is_active"]:
                     print("Account is already active.")
                 else:
                     user["is_active"] = True
+                    database.save_data(data)
                     print("Account activated successfully!")
                 return
         raise ValueError("Email not found. Please register first.")
@@ -98,7 +101,7 @@ def login():
         input_password = input("Enter your password: ")
         input_password = validate_required(input_password, "Password")
 
-        for user in database.users:
+        for user in database.get_users():
             if user["email"] == input_email:
                 if not user["is_active"]:
                     print("Account is not active. Please activate your account first.")

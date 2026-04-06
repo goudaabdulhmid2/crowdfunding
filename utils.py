@@ -1,5 +1,5 @@
 import re
-from database import users
+import database
 from datetime import datetime
 
 
@@ -19,7 +19,7 @@ def validate_email(email):
     return email
 
 def validate_email_is_unique(email):
-    for user in users:
+    for user in database.get_users():
         if user["email"] == email:
             raise ValueError("Email already exists.")
     return email

@@ -58,18 +58,15 @@ def create_project():
         end_date = validate_required(end_date, "End Date")
         end_date = validate_date_format(end_date, "End Date")
 
-        start_date,end_date=validate_start_end_dates(start_date, end_date)
+        start_date, end_date=validate_start_end_dates(start_date, end_date)
         new_project["start_date"] = start_date
         new_project["end_date"] = end_date
 
         owner_email = database.current_user["email"]
         new_project["owner_email"] = owner_email
 
-        database.projects.append(new_project)
+        database.add_project(new_project)
         print("Project created successfully!")
-
-
-        
 
     except ValueError as e:
         print(f"Error: {e}")
