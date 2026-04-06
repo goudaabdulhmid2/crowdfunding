@@ -16,7 +16,8 @@ def show_project_menu():
     print("3. View All Projects")
     print("4. Edit Own Projects")
     print("5. Delete Own Projects")
-    print("6. Back to Main Menu")
+    print("6. Search Projects By Date")
+    print("7. Back to Main Menu")
 
 
     choice = input("Enter your choice: ")
@@ -31,8 +32,10 @@ def show_project_menu():
         case "4":
             edit_project()
         case "5":
-            print("Deleting projects is currently not implemented.")
+            delete_project()
         case "6":
+            search_projects_by_date()
+        case "7":
             print("Returning to the main menu.")
         case _:
             print("Invalid choice. Please try again.")
@@ -186,5 +189,36 @@ def edit_project():
 
         database.save_data(data)
         print("Project updated successfully!")
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+def delete_project():
+
+    if database.current_user is None:
+        print("You must be logged in to delete your projects.")
+        return
+    
+    data = database.load_data()
+    owner_email = database.current_user["email"]
+    projects = [p for p in data["projects"] if p["owner_email"] == owner_email]
+
+    if not projects:
+        print("You have not created any projects yet.")
+        return
+    
+    print("\n=== Own projects ===")
+    for idx, project in enumerate(projects, start=1):
+        print(f"{idx}. {project['title']}")
+    
+    choice = input("Enter the number of the project you want to delete: ")
+    try:
+        choice = validate_required(choice, "Project Choice")
+        choice = validate_choice(choice, range(1, len(projects) + 1))
+        project_to_delete = projects[choice - 1]
+
+        data["projects"].remove(project_to_delete)
+        database.save_data(data)
+        print("Project deleted successfully!")
     except ValueError as e:
         print(f"Error: {e}")
