@@ -1,13 +1,15 @@
 {
-    "users":[{
-        "first_name": "Hamid",
-        "last_name": "Hassan",
-        "email": "test@gmail.com",
-        "phone": "01012345678",
-        "password": "password",
-        "is_active": true
-    }],
-    "projects":[
+    "users": [
+        {
+            "first_name": "Hamid",
+            "last_name": "Hassan",
+            "email": "test@gmail.com",
+            "phone": "01012345678",
+            "password": "password",
+            "is_active": true
+        }
+    ],
+    "projects": [
         {
             "title": "Project 1",
             "details": "Description of project 1",

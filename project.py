@@ -37,7 +37,7 @@ def show_project_menu():
         print("4. Edit Own Projects")
         print("5. Delete Own Projects")
         print("6. Search Projects By Date")
-        print("7. Back to Main Menu")
+        print("7. Logout and Return to Main Menu")
 
 
         choice = input("Enter your choice: ")
