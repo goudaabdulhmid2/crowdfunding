@@ -5,8 +5,7 @@ from utils import (
     validate_egyptian_phone,
     validate_email_is_unique,
 )
-from database import users
-
+import database
 
 def show_auth_menu():
     print("\n=== Authentication Menu ===")
@@ -23,7 +22,7 @@ def show_auth_menu():
         case "2":
             activate_account()
         case "3":
-            print("Login is currently not implemented.")
+            login()
         case "4":
             print("Exiting the application. Goodbye!")
         case _:
@@ -63,7 +62,7 @@ def register_user():
 
         new_user["is_active"] = False
 
-        users.append(new_user)
+        database.users.append(new_user)
         print("Registration successful! Please activate your account before logging in.")
     
     except ValueError as e:
@@ -76,7 +75,7 @@ def activate_account():
         input_email = validate_required(input_email, "Email")
         input_email = validate_email(input_email)
 
-        for user in users:
+        for user in database.users:
             if user["email"] == input_email:
                 if user["is_active"]:
                     print("Account is already active.")
@@ -86,5 +85,32 @@ def activate_account():
                 return
         raise ValueError("Email not found. Please register first.")
     
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+def login():
+    try:
+        input_email = input("Enter your email to login: ")
+        input_email = validate_required(input_email, "Email")
+        input_email = validate_email(input_email)
+
+        input_password = input("Enter your password: ")
+        input_password = validate_required(input_password, "Password")
+
+        for user in database.users:
+            if user["email"] == input_email:
+                if not user["is_active"]:
+                    print("Account is not active. Please activate your account first.")
+                    return
+                if user["password"] == input_password:
+                    print(f"Welcome back, {user['first_name']}!")
+                    database.current_user = user
+                    return
+                else:
+                    raise ValueError("Incorrect password. Please try again.")
+                
+        raise ValueError("Email not found. Please register first.")
+
     except ValueError as e:
         print(f"Error: {e}")
