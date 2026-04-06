@@ -222,3 +222,34 @@ def delete_project():
         print("Project deleted successfully!")
     except ValueError as e:
         print(f"Error: {e}")
+
+
+def search_projects_by_date():
+    print("\n=== Search Projects By Date ===")
+    date_input = input("Enter a date (YYYY-MM-DD) to find active projects: ")
+    try:
+        date_input = validate_required(date_input, "Date")
+        date_input = validate_date_format(date_input, "Date")
+
+        projects = database.get_projects()
+        active_projects = [
+            p for p in projects if p["start_date"] <= date_input <= p["end_date"]
+        ]
+
+        if not active_projects:
+            print("No active projects found for the given date.")
+            return
+
+        print(f"\nProjects active on {date_input}:")
+        for idx, project in enumerate(active_projects, start=1):
+            print(f"\nProject #{idx}")
+            print(f"Title: {project['title']}")
+            print(f"Details: {project['details']}")
+            print(f"Target: {project['total_target']}")
+            print(f"Start Date: {project['start_date']}")
+            print(f"End Date: {project['end_date']}")
+            print(f"Owner: {project['owner_email']}")
+            print("-" * 30)
+
+    except ValueError as e:
+        print(f"Error: {e}")
